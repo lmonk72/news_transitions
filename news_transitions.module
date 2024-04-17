@@ -1,0 +1,40 @@
+<?php
+
+use Drupal\node\NodeInterface;
+use Drupal\Core\Session\AccountInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for node entities.
+ */
+function news_transitions_node_presave(NodeInterface $node) {
+  // Check if the current user has the required permission
+  $currentUser = \Drupal::currentUser();
+  if (!$currentUser->hasPermission('manage news transitions')) {
+    // If the user does not have permission, do nothing
+    return;
+  }
+
+  if ($node->getType() == 'article') {
+    $isSticky = $node->isSticky();
+
+    if ($isSticky) {
+      $query = \Drupal::entityQuery('node')
+        ->condition('type', 'article')
+        ->condition('sticky', TRUE)
+        ->range(0, 1)
+        ->sort('created', 'DESC')
+        ->accessCheck(TRUE);  // Enforce access checks
+
+      $nids = $query->execute();
+      if (!empty($nids)) {
+        $nid = reset($nids);
+        $currentMainHeadline = \Drupal\node\Entity\Node::load($nid);
+        if ($currentMainHeadline->id() != $node->id()) {
+          $currentMainHeadline->setSticky(FALSE);
+          $currentMainHeadline->setPromoted(TRUE);
+          $currentMainHeadline->save();
+        }
+      }
+    }
+  }
+}

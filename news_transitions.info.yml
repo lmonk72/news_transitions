@@ -1,0 +1,7 @@
+name: News Transitions
+type: module
+description: Handles transitions of news content between different placements.
+core_version_requirement: ^10
+package: Custom
+dependencies:
+  - drupal:views
