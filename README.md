@@ -11,6 +11,10 @@ Rather than wasting time trying to locate the old one, why not have an automatic
 
 ## User guide
 
+### Prerequisites
+
+This module is designed to work with Drupal 9.4^ | 10^
+
 ### Configure Permissions
 This module is really simple. When installed the only thing you need to do is configure the permissions to say who can use the module.
 
